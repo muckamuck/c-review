@@ -40,10 +40,4 @@ int main() {
     print_answer(&the_answer, "the_answer");
     the_answer.msg[0] = 'a';
     print_answer(&another_answer, "another_answer");
-    /*printf("a = %d\n", the_answer.a);*/
-    /*printf("b = %d\n", the_answer.b);*/
-    /*printf("msg = %s\n", the_answer.msg);*/
-    /*printf("    &the_answer = %lx\n", &the_answer);*/
-    /*printf("&another_answer = %lx\n", &another_answer);*/
-    /*printf("msg = %s\n", another_answer.msg);*/
 }
