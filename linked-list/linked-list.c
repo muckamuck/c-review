@@ -8,19 +8,39 @@ struct _item {
     struct _item* next;
     struct _item* prev;
 };
-
 typedef struct _item item;
 
-item* add_item(item* prev, char* message) {
-    item* new_item = malloc(sizeof(item)); 
-    strcpy(new_item->message, message);
-    new_item->prev = prev;
-    new_item->next = NULL;
-    return new_item;
+struct _list {
+    item* current_head;
+    item* current_tail;
+};
+typedef struct _list list;
+
+
+list* create_list() {
+    list* new_list = malloc(sizeof(list));
+    new_list->current_head = NULL;
+    new_list->current_tail = NULL;
 }
 
-void print_list(item* start) {
-    item* current = start;
+item* add_item(list* the_list, char* message) {
+    item* new_item = malloc(sizeof(item));
+    new_item->next = NULL;
+    strcpy(new_item->message, message);
+
+    if (the_list->current_head == NULL) {
+        the_list->current_head = new_item;
+        the_list->current_tail = new_item;
+        new_item->prev = NULL;
+    } else {
+        the_list->current_tail->next = new_item;
+        new_item->prev = the_list->current_tail;
+        the_list->current_tail = new_item;
+    }
+}
+
+void walk_list(list* the_list) {
+    item* current = the_list->current_head;
     while (current != NULL) {
         printf("x%lx -> %s\n", current, current->message);
         current = current->next;
@@ -28,10 +48,13 @@ void print_list(item* start) {
 }
 
 int main(int argc, char** argv, char** envp) {
-    item* current_head = NULL;
-    item* new_item = NULL;
-    new_item = add_item(NULL, "stuff");
-    current_head = new_item;
+    list* the_list = NULL;
+    item* current_item = NULL;
 
-    print_list(current_head);
+    the_list = create_list();
+    current_item = add_item(the_list, "stuff");
+    current_item = add_item(the_list, "junk");
+    current_item = add_item(the_list, "crap");
+
+    walk_list(the_list);
 }
