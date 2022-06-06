@@ -13,6 +13,7 @@ typedef struct _item item;
 struct _list {
     item* current_head;
     item* current_tail;
+    long item_count;
 };
 typedef struct _list list;
 
@@ -21,6 +22,7 @@ list* create_list() {
     list* new_list = malloc(sizeof(list));
     new_list->current_head = NULL;
     new_list->current_tail = NULL;
+    new_list->item_count = 0;
 }
 
 item* add_item(list* the_list, char* message) {
@@ -37,13 +39,39 @@ item* add_item(list* the_list, char* message) {
         new_item->prev = the_list->current_tail;
         the_list->current_tail = new_item;
     }
+
+    the_list->item_count++;
+    return new_item;
+}
+
+bool remove_item(list* the_list, item* x) {
+    printf("deleting 0x%lx\n", x);
+    
+    if (x->prev) {
+        x->prev->next = x->next;
+    } else {
+        the_list->current_head = x->next;
+    }
+
+    if (x->next) {
+        x->next->prev = x->prev;
+    } else {
+        the_list->current_tail = x->prev;
+    }
+
+    the_list->item_count--;
+    free(x);
 }
 
 void walk_list(list* the_list) {
     item* current = the_list->current_head;
-    while (current != NULL) {
-        printf("x%lx -> %s\n", current, current->message);
-        current = current->next;
+    if (the_list->item_count > 0) {
+        while (current != NULL) {
+            printf("0x%12lx -> %s\tprev=0x%012lx next=0x%012lx\n", current, current->message, current->prev, current->next);
+            current = current->next;
+        }
+    } else {
+        printf("the list is empty\n");
     }
 }
 
@@ -52,9 +80,21 @@ int main(int argc, char** argv, char** envp) {
     item* current_item = NULL;
 
     the_list = create_list();
-    current_item = add_item(the_list, "stuff");
-    current_item = add_item(the_list, "junk");
-    current_item = add_item(the_list, "crap");
-
+    item* stuff = add_item(the_list, "stuff");
+    item* junk = add_item(the_list, "junk");
+    item* crap = add_item(the_list, "crap");
     walk_list(the_list);
+    printf("---\n\n");
+
+    remove_item(the_list, stuff);
+    walk_list(the_list);
+    printf("---\n\n");
+
+    remove_item(the_list, junk);
+    walk_list(the_list);
+    printf("---\n\n");
+
+    remove_item(the_list, crap);
+    walk_list(the_list);
+    printf("---\n\n");
 }
